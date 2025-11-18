@@ -1,0 +1,26 @@
+name: CI Base Express + Lint
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  verification-qualite:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Installation Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Installation des paquets
+        run: npm install
+
+      - name: Vérification Syntaxe (Lint)
+        run: npm run lint
