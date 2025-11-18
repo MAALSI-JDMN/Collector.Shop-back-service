@@ -2,7 +2,7 @@ name: CI Base Express + Lint
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   verification-qualite:
