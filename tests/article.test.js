@@ -18,5 +18,10 @@ describe("API Articles - GET /articles", () => {
         expect(article).toHaveProperty('nom');
         expect(article).toHaveProperty('prix');
         expect(article).toHaveProperty('stock');
+
+        // Vérifier le type de chaques propriétés
+        expect(typeof article.nom).toBe('string');
+        expect(typeof article.prix).toBe('number');
+        expect(typeof article.stock).toBe('number');
     });
 });
