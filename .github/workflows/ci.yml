@@ -2,14 +2,15 @@ name: CI Base Express + Lint
 
 on:
   push:
+    branches: [ "master", "feature-pipeline"]
+  pull_request:
     branches: [ "master" ]
 
 jobs:
-  verification-qualite:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout du code
         uses: actions/checkout@v3
 
@@ -24,3 +25,26 @@ jobs:
 
       - name: Vérification Syntaxe (Lint)
         run: npm run lint
+
+      - name: Exécution des tests d'intégration
+        run: npm test
+
+  sonarcloud:
+    name: Qualité • SonarCloud (multi-langages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan SonarCloud (PHP + JS/TS)
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=MAALSI-JDMN_Collector.Shop-back-service
+            -Dsonar.organization=maalsi-jdmn
