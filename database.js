@@ -1,8 +1,12 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('main.db', (err) => {
+
+const DB_PATH = process.env.NODE_ENV === "test" ? ":memory:" : "main.db";
+
+const db = new sqlite3.Database(DB_PATH, (err) => {
     if (err) throw err;
-    console.log("SQLite connecté → main.db");
+    console.log(`SQLite connecté → ${DB_PATH}`);
 });
+
 
 // Création des tables
 db.serialize(() => {
