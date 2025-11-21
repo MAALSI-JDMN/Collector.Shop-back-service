@@ -8,8 +8,7 @@ var logger = require('morgan');
 const db = require('./database');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var coucouRouter = require('./routes/coucou');
+var articlesRouter = require('./routes/articles');
 
 var app = express();
 
@@ -24,8 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/coucou', coucouRouter);
-app.use('/users', usersRouter);
+app.use('/articles',articlesRouter);
 
 // catch 404
 app.use(function(req, res, next) {
