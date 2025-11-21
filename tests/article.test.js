@@ -1,4 +1,7 @@
 process.env.NODE_ENV = 'main';
+
+let articleId;
+
 // tests/article.test.js
 const request = require('supertest');
 const app = require('../app');
