@@ -90,4 +90,3 @@ describe("DELETE /articles/:id (DB test)", () => {
         });
     });
 });
-S
