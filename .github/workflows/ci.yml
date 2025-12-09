@@ -69,9 +69,7 @@ jobs:
           args: >
             -Dsonar.projectKey=MAALSI-JDMN_Collector.Shop-back-service
             -Dsonar.organization=maalsi-jdmn
-             # Couvertures
             -Dsonar.javascript.lcov.reportPaths=${{ env.BACK_COVERAGE }}
-            # SOURCES backend 
             -Dsonar.sources=routes
             -Dsonar.tests=tests
             -Dsonar.exclusions=**/node_modules/**
