@@ -42,7 +42,8 @@ block content
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
         .dot {
-            width: 8px; height: 8px;
+            width: 8px;
+            height: 8px;
             background-color: #34d399;
             border-radius: 50%;
             margin-right: 8px;
@@ -82,7 +83,8 @@ block content
             border-left: 4px solid #c084fc;
         }
         .avatar {
-            width: 56px; height: 56px;
+            width: 56px;
+            height: 56px;
             background: linear-gradient(135deg, #6366f1, #a855f7);
             border-radius: 12px;
             display: flex;
@@ -94,29 +96,37 @@ block content
             margin-right: 20px;
             box-shadow: 0 4px 10px rgba(168, 85, 247, 0.4);
         }
-        .content-area { flex-grow: 1; }
-        .user-header { display: flex; align-items: baseline; margin-bottom: 4px; }
-        .user-name { font-size: 18px; font-weight: 600; color: #f8fafc; margin-right: 10px; }
+        .content-area { flex-grow: 1;
+        }
+        .user-header { display: flex; align-items: baseline; margin-bottom: 4px;
+        }
+        .user-name { font-size: 18px; font-weight: 600; color: #f8fafc; margin-right: 10px;
+        }
         .user-tag {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+            font-size: 11px;
+            text-transform: uppercase; letter-spacing: 1px;
             background: rgba(192, 132, 252, 0.2); color: #e9d5ff;
             padding: 2px 8px; border-radius: 4px; font-weight: 700;
         }
-        .user-details { color: #94a3b8; font-size: 14px; margin: 4px 0; }
-        .highlight { color: #38bdf8; }
+        .user-details { color: #94a3b8; font-size: 14px; margin: 4px 0;
+        }
+        .highlight { color: #38bdf8;
+        }
 
         .card.system-card {
             border-left: 4px solid #64748b;
             font-family: 'Fira Code', monospace;
         }
         .sys-icon {
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             background: #334155;
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
             margin-right: 20px; color: #94a3b8; font-size: 18px;
         }
-        .sys-text { color: #cbd5e1; font-size: 14px; }
+        .sys-text { color: #cbd5e1; font-size: 14px;
+        }
 
         .time-badge {
             font-size: 12px;
@@ -128,8 +138,10 @@ block content
             white-space: nowrap;
         }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5;
+        } 100% { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0;
+            transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
 
     div.header-container
@@ -141,6 +153,7 @@ block content
             span Live Connected
 
     ul#messages
+
 
     script(src="/socket.io/socket.io.js")
     script.
@@ -180,7 +193,6 @@ block content
           </div>
           <div class="time-badge">${new Date().toLocaleTimeString()}</div>
         `;
-
             } else {
                 li.className = 'card system-card';
                 li.innerHTML = `

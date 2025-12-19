@@ -40,6 +40,7 @@ services:
     environment:
       - KAFKA_BROKER=kafka:9092
       - KAFKAJS_NO_PARTITIONER_WARNING=1
+      - KAFKA_GROUP_ID=shop-backend-dashboard
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
