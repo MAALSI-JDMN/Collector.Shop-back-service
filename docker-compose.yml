@@ -39,3 +39,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+  shop_api:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules

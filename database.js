@@ -14,16 +14,15 @@ db.serialize(() => {
     // === Création de la table articles ===
     db.run(`
         CREATE TABLE IF NOT EXISTS articles (
-                                                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                nom TEXT NOT NULL,
-                                                prix REAL NOT NULL,
-                                                stock INTEGER NOT NULL
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nom TEXT NOT NULL,
+            prix REAL NOT NULL,
+            stock INTEGER NOT NULL
         );
     `);
 
     console.log("Table 'articles' initialisée");
 
-    // === Vérification si la table est vide ===
     db.get("SELECT COUNT(*) AS count FROM articles", (err, row) => {
         if (err) throw err;
 

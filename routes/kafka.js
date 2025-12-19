@@ -65,4 +65,8 @@ router.get('/ping', async function(req, res, next) {
     }
 });
 
+router.get('/dashboard', function(req, res, next) {
+    res.render('dashboard', { title: 'Dashboard Kafka Live' });
+});
+
 module.exports = router;
