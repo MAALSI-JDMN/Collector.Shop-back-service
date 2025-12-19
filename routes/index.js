@@ -6,4 +6,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/dashboard', function(req, res, next) {
+  res.render('dashboard', { title: 'Dashboard Kafka Live' });
+});
+
 module.exports = router;

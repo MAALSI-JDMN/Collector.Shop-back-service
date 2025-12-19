@@ -1,43 +1,30 @@
 const kafka = require('./client');
-
 const consumer = kafka.consumer({ groupId: 'shop-backend-worker' });
-const admin = kafka.admin();
 
-const runWorker = async () => {
+const runWorker = async (io) => {
     try {
         await consumer.connect();
-        await admin.connect();
-        const topicName = 'quickstart-events';
-        const existingTopics = await admin.listTopics();
+        await consumer.subscribe({ topic: 'quickstart-events', fromBeginning: true });
 
-        if (!existingTopics.includes(topicName)) {
-            console.log(`The topic '${topicName}' does not exist. Creation in progress...`);
-            await admin.createTopics({
-                topics: [{
-                    topic: topicName,
-                    numPartitions: 1,
-                    replicationFactor: 1
-                }],
-            });
-            console.log(`Topic '${topicName}' created successfully!`);
-        }
-        await admin.disconnect();
-        await consumer.subscribe({ topic: topicName, fromBeginning: true });
-
-        console.log(`#       WORKER READY - OPERATIONAL SYSTEM      #`);
+        console.log(`CONSUMER PRÊT - En attente de messages...`);
 
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 const payload = message.value.toString();
-                console.log(`Received: ${payload}`);
-                // ICI : Code métier futur
+                console.log(`Log Serveur: ${payload}`);
+
+                if (io) {
+                    io.emit('nouvelle-commande', {
+                        contenu: payload,
+                        date: new Date().toLocaleTimeString()
+                    });
+                }
             },
         });
 
     } catch (error) {
-        console.error("Critical error:", error);
-
+        console.error("Erreur Consumer:", error);
     }
 };
 
-runWorker();
+module.exports = runWorker;
