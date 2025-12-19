@@ -11,6 +11,7 @@ services:
   kafka:
     image: apache/kafka:4.1.1
     container_name: kafka_shop
+    networks: [ app-network ]
     ports:
       - "9092:9092"
     environment:
@@ -29,20 +30,30 @@ services:
       retries: 5
 
   api:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: shop_api
+    networks: [ app-network ]
     ports:
       - "3000:3000"
     environment:
       - KAFKA_BROKER=kafka:9092
       - KAFKAJS_NO_PARTITIONER_WARNING=1
+      - KAFKA_GROUP_ID=shop-backend-dashboard
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       kafka:
         condition: service_healthy
 
   worker:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: shop_worker
+    networks: [ app-network ]
     command: ["node", "kafka/consumer.js"]
     environment:
       - KAFKA_BROKER=kafka:9092
@@ -51,15 +62,10 @@ services:
       kafka:
         condition: service_healthy
 
-  shop_api:
-    build: .
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-
   frontend:
     build:
       context: ./frontEnd
+    networks: [ app-network ]
     container_name: shop_frontend
     ports:
       - "8080:8080"

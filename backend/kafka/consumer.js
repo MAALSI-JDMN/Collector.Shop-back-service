@@ -1,12 +1,14 @@
 const kafka = require('./client');
-const consumer = kafka.consumer({ groupId: 'shop-backend-worker' });
+
+const groupId = process.env.KAFKA_GROUP_ID || 'shop-backend-worker';
+const consumer = kafka.consumer({ groupId: groupId });
 
 const runWorker = async (io) => {
     try {
         await consumer.connect();
         await consumer.subscribe({ topic: 'quickstart-events', fromBeginning: true });
 
-        console.log(`CONSUMER PRÊT - En attente de messages...`);
+        console.log(`CONSUMER PRÊT (Group: ${groupId}) - En attente de messages...`);
 
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
@@ -28,3 +30,7 @@ const runWorker = async (io) => {
 };
 
 module.exports = runWorker;
+
+if (require.main === module) {
+    runWorker().catch(err => console.error("Erreur fatale worker:", err));
+}
