@@ -2,21 +2,26 @@ name: CI Base Express + Lint
 
 on:
   push:
+    branches: [ "master", "feature-pipeline"]
+  pull_request:
     branches: [ "master" ]
 
+env:
+  BACK_COVERAGE: coverage-back.info
+  NODE_VERSION: 20
+
 jobs:
-  verification-qualite:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout du code
         uses: actions/checkout@v3
 
       - name: Installation Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Installation des paquets
@@ -24,3 +29,47 @@ jobs:
 
       - name: Vérification Syntaxe (Lint)
         run: npm run lint
+
+      - name: Exécution des tests d'intégration
+        run: npm test -- --coverage --coverageReporters="lcov"
+
+      - name: Prépare le rapport de couverture back (LCOV)
+        run: |
+          test -f coverage/lcov.info || (echo "Pas de LCOV back, création d'un stub" && mkdir -p coverage && printf "TN:\nSF:dummy.js\nDA:1,0\nend_of_record\n" > coverage/lcov.info)
+          mv coverage/lcov.info ${{ env.BACK_COVERAGE }}
+
+      - name: Artefact couverture backend
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: ${{ env.BACK_COVERAGE }}
+          retention-days: 7
+
+  sonarcloud:
+    name: Qualité • SonarCloud (multi-langages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Télécharge couverture backend
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+
+      - name: Scan SonarCloud (PHP + JS/TS)
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=MAALSI-JDMN_Collector.Shop-back-service
+            -Dsonar.organization=maalsi-jdmn
+            -Dsonar.javascript.lcov.reportPaths=${{ env.BACK_COVERAGE }}
+            -Dsonar.sources=routes
+            -Dsonar.tests=tests
+            -Dsonar.exclusions=**/node_modules/**
