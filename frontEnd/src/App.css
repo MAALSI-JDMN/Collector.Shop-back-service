@@ -1,0 +1,211 @@
+/* --- RESET & VARIABLES --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent-color: #6366f1;
+  --accent-hover: #4f46e5;
+  --gold: #fbbf24;
+  --max-width: 1200px; /* Largeur max du contenu */
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+/* --- UTILITAIRES --- */
+/* C'est cette classe qui centre ton site */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto; /* Centre horizontalement */
+  padding: 0 1.5rem; /* Marges de sécurité sur les côtés */
+}
+
+/* --- NAVBAR --- */
+.navbar {
+  background-color: rgba(15, 23, 42, 0.95);
+  border-bottom: 1px solid #334155;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px; /* Hauteur fixe pour la nav */
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+}
+.dot { color: var(--accent-color); }
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+/* --- BUTTONS --- */
+button {
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+}
+.btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid #334155;
+}
+.btn-secondary:hover { border-color: var(--text-primary); background-color: rgba(255,255,255,0.05); }
+
+.btn-cta {
+  background-color: var(--gold);
+  color: #0f172a;
+  border: none;
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  margin-top: 2rem;
+  font-weight: 700;
+}
+.btn-cta:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
+
+/* --- HERO SECTION --- */
+.hero {
+  /* Dégradé subtil */
+  background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+  padding: 6rem 0; /* Espace vertical */
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #fff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.hero p {
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  max-width: 700px;
+  margin: 0 auto; /* Centre le texte du paragraphe */
+}
+
+/* --- CATEGORIES --- */
+.categories-section {
+  padding: 5rem 0;
+}
+
+.categories-section h2 {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 2rem;
+}
+
+.grid {
+  display: grid;
+  /* Responsive magique : crée autant de colonnes que possible de min 260px */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background-color: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid #334155;
+  transition: transform 0.3s, border-color 0.3s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent-color);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.card-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* --- TRUST SECTION --- */
+.trust-section {
+  padding: 1.5rem 0;
+  background-color: #020617;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  border-top: 1px solid #1e293b;
+  text-align: center;
+}
+
+/* --- RESPONSIVE (MOBILE) --- */
+@media (max-width: 768px) {
+  /* Navbar en colonne */
+  .navbar-content {
+    flex-direction: column;
+    height: auto;
+    padding: 1rem 0;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-links button {
+    width: 100%; /* Boutons pleine largeur sur mobile */
+  }
+
+  /* Hero plus petit */
+  .hero {
+    padding: 4rem 0;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .grid {
+    gap: 1rem; /* Moins d'espace entre les cartes sur mobile */
+  }
+}
