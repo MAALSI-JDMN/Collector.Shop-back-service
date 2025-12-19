@@ -7,7 +7,7 @@ var logger = require('morgan');
 // import DB
 const db = require('./database');
 
-var indexRouter = require('./routes/index');
+var indexRouter = require('./routes');
 var kafkaRouter = require('./routes/kafka');
 var testRouter = require('./routes/test')
 var articlesRouter = require('./routes/articles');
