@@ -77,4 +77,4 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=${{ env.BACK_COVERAGE }}
             -Dsonar.sources=backend/routes
             -Dsonar.tests=backend/tests
-            -Dsonar.exclusions=**/node_modules/**, frontend/**
+            -Dsonar.exclusions=**/node_modules/**,frontend/**
