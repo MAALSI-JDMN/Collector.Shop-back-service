@@ -28,3 +28,7 @@ const runWorker = async (io) => {
 };
 
 module.exports = runWorker;
+
+if (require.main === module) {
+    runWorker().catch(err => console.error("Erreur fatale worker:", err));
+}
