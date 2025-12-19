@@ -1,0 +1,1 @@
+# Changelog - Collector shop## v1.0.0 - 19-12-2025- Add GitHub action for automatic tests (Jest, ESLint, SonarCloud)- Add CRUD articles for tests
