@@ -1,6 +1,19 @@
 // ----------- CRUD = DB test -----------
 process.env.NODE_ENV = "test";
 
+jest.mock("kafkajs", () => {
+    return {
+        Kafka: jest.fn(() => ({
+            producer: jest.fn(() => ({
+                connect: jest.fn().mockResolvedValue(),
+                send: jest.fn().mockResolvedValue(),
+                disconnect: jest.fn().mockResolvedValue(),
+            })),
+        })),
+        logLevel: { WARN: 1 },
+    };
+});
+
 const request = require("supertest");
 const app = require("../app");
 const db = require("../database");
