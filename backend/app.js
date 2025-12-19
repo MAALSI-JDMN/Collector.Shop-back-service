@@ -9,7 +9,7 @@ const db = require('./database');
 
 var indexRouter = require('./routes');
 var kafkaRouter = require('./routes/kafka');
-var testRouter = require('./routes/test')
+var demoRouter = require('./routes/demo')
 var articlesRouter = require('./routes/articles');
 
 var app = express();
@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/articles',articlesRouter);
 app.use('/kafka', kafkaRouter);
-app.use('/test', testRouter)
+app.use('/demo', demoRouter)
 
 // catch 404
 app.use(function(req, res, next) {
