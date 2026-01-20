@@ -6,6 +6,7 @@ networks:
 
 volumes:
   keycloak-db-shop-data:
+  rabbitmq-data:
 
 services:
   kafka:
@@ -29,6 +30,24 @@ services:
       timeout: 10s
       retries: 5
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_shop
+    networks: [ app-network ]
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
   api:
     build:
       context: ./backend
@@ -41,11 +60,14 @@ services:
       - KAFKA_BROKER=kafka:9092
       - KAFKAJS_NO_PARTITIONER_WARNING=1
       - KAFKA_GROUP_ID=shop-backend-dashboard
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
       kafka:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   worker:
@@ -60,6 +82,19 @@ services:
       - KAFKAJS_NO_PARTITIONER_WARNING=1
     depends_on:
       kafka:
+        condition: service_healthy
+
+  worker_rabbit:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shop_worker_rabbit
+    networks: [ app-network ]
+    command: ["node", "rabbitmq/consumer.js"]
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
         condition: service_healthy
 
   frontend:

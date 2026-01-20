@@ -1,6 +1,6 @@
 # Collector.Shop - Backend & Infrastructure
 
-Ce projet contient l'API Backend (ExpressJS) et l'infrastructure de messagerie (Kafka) entièrement dockerisés.
+Ce projet contient l'API Backend (ExpressJS) et l'infrastructure de messagerie (Kafka + RabbitMQ) entièrement dockerisés.
 
 ## Prérequis
 
@@ -23,7 +23,11 @@ mode silencieux (lance en arrière-plan et rend la main sur le terminal immédia
 (Les logs sont visibles de base sur Docker desktop)
 
 ```bash
-  docker logs -f shop_worker
+  docker logs -f shop_worker          # Worker Kafka
+```
+
+```bash
+  docker logs -f shop_worker_rabbit   # Worker RabbitMQ
 ```
 
 ```bash
@@ -38,57 +42,109 @@ mode silencieux (lance en arrière-plan et rend la main sur le terminal immédia
 
 Une fois la commande terminée, les services suivants sont accessibles :
 
-- API Express : http://localhost:3000
-
-- Kafka Broker : Port 9092 (interne)
-
-- Worker : En arrière-plan (visible dans les logs)
+| Service | URL | Identifiants |
+|---------|-----|--------------|
+| API Express | http://localhost:3000 | - |
+| Frontend React | http://localhost:8080 | - |
+| RabbitMQ Management | http://localhost:15672 | guest / guest |
+| Keycloak Admin | http://localhost:8081 | admin / admin |
+| Kafka Broker | Port 9092 (interne) | - |
 
 ## Architecture du code
 
-Voici les fichiers clés :
+### Structure Messaging (Architecture Miroir Kafka/RabbitMQ)
 
-- routes/kafka.js (Producteur) : Point d'entrée API. C'est ici que l'on publie les messages vers Kafka.
-- kafka/consumer.js (Consommateur) : Script du Worker. C'est ici qu'il faut ajouter la logique métier asynchrone (traitement des commandes, mails, etc.).
-- /client.js : Configuration technique de la connexion Kafka.
-- docker-compose.yml : Orchestration des services.
+Le projet implémente deux systèmes de messaging de manière identique pour permettre un **benchmark comparatif**.
+
+| Composant | Kafka | RabbitMQ |
+|-----------|-------|----------|
+| **Client** | `kafka/client.js` | `rabbitmq/client.js` |
+| **Producer** | `routes/kafka.js` | `routes/rabbitmq.js` |
+| **Consumer** | `kafka/consumer.js` | `rabbitmq/consumer.js` |
+| **Worker** | `shop_worker` | `shop_worker_rabbit` |
+| **Destination** | Topic `quickstart-events` | Queue `quickstart-events` |
+
+### Fichiers clés
+
+- `routes/kafka.js` - Producteur Kafka (API)
+- `routes/rabbitmq.js` - Producteur RabbitMQ (API)
+- `kafka/consumer.js` - Script du Worker Kafka
+- `rabbitmq/consumer.js` - Script du Worker RabbitMQ
+- `docker-compose.yml` - Orchestration des services
 
 ## Tester l'application
 
-Vérifier que les services communiquent entre eux via le navigateur :
+### Test Kafka
 
-GET
+Vérifier la connectivité via le navigateur :
+
+**GET**
 - http://localhost:3000/kafka/ping
 
-### Test avancé (Postman) : 
-POST
-
+**POST** (Postman ou curl)
 - http://localhost:3000/kafka/publish
 
-```
+```json
 {
   "eventType": "ORDER_CREATED",
   "message": "Achat carte Dracaufeu #123"
 }
 ```
 
-Fast pass dans la console navigateur : 
+### Test RabbitMQ
 
-``` 
+Vérifier la connectivité via le navigateur :
+
+**GET**
+- http://localhost:3000/rabbitmq/ping
+
+**POST** (Postman ou curl)
+- http://localhost:3000/rabbitmq/publish
+
+```json
+{
+  "eventType": "ORDER_CREATED",
+  "message": "Achat carte Dracaufeu #123"
+}
+```
+
+### Fast pass dans la console navigateur
+
+**Kafka :**
+``` javascript
 fetch('http://localhost:3000/kafka/publish', {
   method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    eventType: 'TEST_NAVIGATEUR',
-    message: 'Ceci est un test envoyé depuis la console navigateur'
+    eventType: 'TEST_KAFKA',
+    message: 'Test envoyé via Kafka'
   })
 })
 .then(response => response.json())
-.then(data => console.log('Réponse du serveur :', data))
-.catch(error => console.error('Erreur :', error));
+.then(data => console.log('Kafka :', data));
 ```
+
+**RabbitMQ :**
+``` javascript
+fetch('http://localhost:3000/rabbitmq/publish', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    eventType: 'TEST_RABBITMQ',
+    message: 'Test envoyé via RabbitMQ'
+  })
+})
+.then(response => response.json())
+.then(data => console.log('RabbitMQ :', data));
+```
+
+### Monitoring RabbitMQ
+
+Accédez à l'interface de management RabbitMQ pour voir les queues, messages et connexions :
+
+- URL : http://localhost:15672
+- Login : `guest`
+- Password : `guest`
 
 ## Arrêt et nettoyage
 
@@ -98,14 +154,14 @@ fetch('http://localhost:3000/kafka/publish', {
 
 Dans le terminal si le service en cours :
 
-    "Ctrl + C" 
+    "Ctrl + C"
 
 Dans le cas contraire :
 ```bash
   docker-compose stop
 ```
 
-### Pour supprimer les conteneurs et réinitialiser les données Kafka :
+### Pour supprimer les conteneurs et réinitialiser les données :
 
 (en cas d'erreur ou de conflit)
 
