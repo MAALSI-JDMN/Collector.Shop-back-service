@@ -1,113 +1,140 @@
-import React, { useEffect, useState, useRef } from 'react';
-import keycloak from '../keycloak'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
 const Home: React.FC = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [userProfile, setUserProfile] = useState<any>(null);
+    const navigate = useNavigate();
+    const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
-    const isRun = useRef(false);
-
-    useEffect(() => {
-        if (isRun.current) return;
-        isRun.current = true;
-
-        keycloak.init({
-            onLoad: 'check-sso',
-            checkLoginIframe: false
-        }).then((authenticated: boolean | ((prevState: boolean) => boolean)) => {
-            setIsAuthenticated(authenticated);
-            if (authenticated) {
-                keycloak.loadUserProfile().then((profile: any) => {
-                    setUserProfile(profile);
-                });
-            }
-        }).catch(console.error);
-    }, []);
-
-    const handleLoginClick = () => {
-        keycloak.login();
-    };
-
-
-    const handleLogoutClick = () => {
-        keycloak.logout();
-    };
-
-    const categories = [
-        { id: 1, title: "Sneakers Édition Limitée", icon: "👟" },
-        { id: 2, title: "Figurines & Jouets", icon: "🤖" },
-        { id: 3, title: "Posters Dédicacés", icon: "🖼️" },
-        { id: 4, title: "Cassettes & Vintage", icon: "📼" },
-    ];
+    const cardStyle = (provider: string, borderColor: string, hoverBg: string) => ({
+        padding: '40px',
+        border: `2px solid ${borderColor}`,
+        borderRadius: '15px',
+        cursor: 'pointer',
+        width: '280px',
+        transition: 'all 0.3s ease',
+        backgroundColor: hoveredCard === provider ? hoverBg : 'white',
+        color: hoveredCard === provider ? 'white' : '#333',
+        boxShadow: hoveredCard === provider
+            ? `0 10px 30px ${borderColor}50`
+            : '0 2px 10px rgba(0,0,0,0.1)',
+        transform: hoveredCard === provider ? 'translateY(-5px)' : 'translateY(0)',
+    });
 
     return (
-        <div className="home-wrapper">
-            {/* Navigation Bar */}
-            <nav className="navbar">
-                <div className="container navbar-content">
-                    <div className="logo">COLLECTOR<span className="dot">.</span></div>
-                    <div className="nav-links">
-                        <button className="btn-secondary">Vendre un objet</button>
+        <div style={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+        }}>
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+                <h1 style={{
+                    fontSize: '3.5rem',
+                    marginBottom: '10px',
+                    color: '#1a1a2e',
+                    fontWeight: 'bold'
+                }}>
+                    COLLECTOR<span style={{ color: '#ff0055' }}>.</span>
+                </h1>
+                <p style={{
+                    fontSize: '1.2rem',
+                    color: '#555',
+                    marginBottom: '50px',
+                    maxWidth: '500px'
+                }}>
+                    Choisissez votre provider d'authentification pour tester
+                </p>
 
-                        {!isAuthenticated ? (
-                            <button className="btn-primary" onClick={handleLoginClick}>
-                                Se connecter
-                            </button>
-                        ) : (
-                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                                <span style={{ fontWeight: 'bold' }}>
-                                    Bonjour, {userProfile?.firstName || "Membre"}
-                                </span>
-                                <button className="btn-primary" onClick={handleLogoutClick}>
-                                    Déconnexion
-                                </button>
-                            </div>
-                        )}
+                <div style={{
+                    display: 'flex',
+                    gap: '30px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap'
+                }}>
+                    {/* Keycloak Card */}
+                    <div
+                        onClick={() => navigate('/home-keycloak')}
+                        onMouseEnter={() => setHoveredCard('keycloak')}
+                        onMouseLeave={() => setHoveredCard(null)}
+                        style={cardStyle('keycloak', '#007bff', '#007bff')}
+                    >
+                        <div style={{ fontSize: '3.5rem', marginBottom: '20px' }}>🔐</div>
+                        <h2 style={{
+                            marginBottom: '15px',
+                            fontSize: '1.5rem',
+                            fontWeight: 'bold'
+                        }}>
+                            Keycloak
+                        </h2>
+                        <p style={{
+                            fontSize: '0.95rem',
+                            lineHeight: '1.5',
+                            opacity: hoveredCard === 'keycloak' ? 1 : 0.7
+                        }}>
+                            Solution open-source de Red Hat pour la gestion des identites
+                        </p>
+                        <div style={{
+                            marginTop: '20px',
+                            padding: '8px 16px',
+                            backgroundColor: hoveredCard === 'keycloak' ? 'rgba(255,255,255,0.2)' : '#f0f0f0',
+                            borderRadius: '20px',
+                            fontSize: '0.85rem',
+                            display: 'inline-block'
+                        }}>
+                            Port: 8081
+                        </div>
+                    </div>
+
+                    {/* Hydra Card */}
+                    <div
+                        onClick={() => navigate('/home-hydra')}
+                        onMouseEnter={() => setHoveredCard('hydra')}
+                        onMouseLeave={() => setHoveredCard(null)}
+                        style={cardStyle('hydra', '#ff0055', '#ff0055')}
+                    >
+                        <div style={{ fontSize: '3.5rem', marginBottom: '20px' }}>🐙</div>
+                        <h2 style={{
+                            marginBottom: '15px',
+                            fontSize: '1.5rem',
+                            fontWeight: 'bold'
+                        }}>
+                            Ory Hydra
+                        </h2>
+                        <p style={{
+                            fontSize: '0.95rem',
+                            lineHeight: '1.5',
+                            opacity: hoveredCard === 'hydra' ? 1 : 0.7
+                        }}>
+                            Serveur OAuth 2.0 et OpenID Connect certifie
+                        </p>
+                        <div style={{
+                            marginTop: '20px',
+                            padding: '8px 16px',
+                            backgroundColor: hoveredCard === 'hydra' ? 'rgba(255,255,255,0.2)' : '#f0f0f0',
+                            borderRadius: '20px',
+                            fontSize: '0.85rem',
+                            display: 'inline-block'
+                        }}>
+                            Port: 4444
+                        </div>
                     </div>
                 </div>
-            </nav>
 
-            {/* Hero Section */}
-            <header className="hero">
-                <div className="container hero-content">
-                    <h1>Ravivez vos souvenirs & émotions</h1>
-                    <p>
-                        La première plateforme sécurisée entre particuliers dédiée aux objets d'exception.
-                        Trouvez la perle rare ou donnez une seconde vie à votre collection.
-                    </p>
-                    <div className="hero-buttons">
-                        <button className="btn-cta">Explorer le catalogue</button>
-                        {isAuthenticated && (
-                            <button className="btn-secondary" style={{marginLeft: '10px'}}>
-                                Mon Tableau de bord
-                            </button>
-                        )}
-                    </div>
-                </div>
-            </header>
-
-            {/* Categories Section */}
-            <section className="categories-section">
-                <div className="container">
-                    <h2>Nos Univers de Collection</h2>
-                    <div className="grid">
-                        {categories.map((cat) => (
-                            <div key={cat.id} className="card">
-                                <div className="card-icon">{cat.icon}</div>
-                                <h3>{cat.title}</h3>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Trust Section */}
-            <section className="trust-section">
-                <div className="container">
-                    <p>🛡️ Paiement sécurisé • Garantie Collector • Vérification des annonces</p>
-                </div>
-            </section>
+                <p style={{
+                    marginTop: '60px',
+                    color: '#888',
+                    fontSize: '0.9rem',
+                    padding: '15px 25px',
+                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    borderRadius: '30px',
+                    display: 'inline-block'
+                }}>
+                    Projet de comparaison des solutions d'authentification
+                </p>
+            </div>
         </div>
     );
 };

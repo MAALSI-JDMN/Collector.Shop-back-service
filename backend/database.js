@@ -21,7 +21,16 @@ db.serialize(() => {
         );
     `);
 
-    console.log("Table 'articles' initialisée");
+    db.run(`
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+    `);
+
+    console.log("Tables initialisées");
 
     db.get("SELECT COUNT(*) AS count FROM articles", (err, row) => {
         if (err) throw err;

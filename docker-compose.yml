@@ -4,6 +4,7 @@ networks:
 
 volumes:
   keycloak-db-shop-data:
+  hydra-data:
 
 services:
   kafka:
@@ -107,3 +108,69 @@ services:
     command:
       - start-dev
       - --import-realm
+
+  hydra-postgres:
+    image: postgres:15
+    networks: [ app-network ]
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+    ports:
+      - "5433:5432"
+    volumes:
+      - hydra-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U hydra" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  hydra-migrate:
+    image: oryd/hydra:v2.2.0
+    networks: [ app-network ]
+    environment:
+      - DSN=postgres://hydra:secret@hydra-postgres:5432/hydra?sslmode=disable
+    command: migrate sql -e --yes
+    depends_on:
+      - hydra-postgres
+    restart: on-failure
+
+  hydra:
+    image: oryd/hydra:v2.2.0
+    networks: [ app-network ]
+    depends_on:
+      hydra-migrate:
+        condition: service_completed_successfully
+      hydra-postgres:
+        condition: service_healthy
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+      - "5555:5555"
+    command: serve all --dev
+    environment:
+      - DSN=postgres://hydra:secret@hydra-postgres:5432/hydra?sslmode=disable
+      - URLS_SELF_ISSUER=http://localhost:4444
+      - URLS_LOGIN=http://localhost:3001/login-hydra
+      - URLS_CONSENT=http://localhost:3000/hydra/consent
+      - URLS_LOGOUT=http://localhost:3000/hydra/logout
+      - SECRETS_SYSTEM=votre_secret_tres_long_et_securise_pour_hydra
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  hydra-init:
+    image: oryd/hydra:v2.2.0
+    container_name: hydra_client_init
+    networks: [ app-network ]
+    depends_on:
+      - hydra
+    restart: "no"
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      echo '⏳ Attente du démarrage de Hydra Admin...';
+      while ! wget -q -O - http://hydra:4445/health/ready >/dev/null 2>&1; do sleep 1; done;
+      echo '✅ Hydra est prêt ! Création du client via l API...';
+      wget --header='Content-Type: application/json' --post-data='{\"client_id\":\"my-react-client\",\"client_name\":\"Comparaison Client\",\"client_secret\":\"my-secret-password\",\"grant_types\":[\"authorization_code\",\"refresh_token\"],\"response_types\":[\"code\",\"id_token\"],\"scope\":\"openid offline\",\"redirect_uris\":[\"http://localhost:3001/callback-hydra\"],\"post_logout_redirect_uris\":[\"http://localhost:3001/home-hydra\"],\"token_endpoint_auth_method\":\"client_secret_post\"}' -qO- http://hydra:4445/admin/clients || echo '⚠️ Le client existe peut-être déjà ou erreur API.';
+      "
