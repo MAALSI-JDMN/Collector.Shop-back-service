@@ -1,12 +1,37 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import keycloak from '../keycloak'
 import '../App.css';
 
 const Home: React.FC = () => {
-    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userProfile, setUserProfile] = useState<any>(null);
+
+    const isRun = useRef(false);
+
+    useEffect(() => {
+        if (isRun.current) return;
+        isRun.current = true;
+
+        keycloak.init({
+            onLoad: 'check-sso',
+            checkLoginIframe: false
+        }).then((authenticated: boolean | ((prevState: boolean) => boolean)) => {
+            setIsAuthenticated(authenticated);
+            if (authenticated) {
+                keycloak.loadUserProfile().then((profile: any) => {
+                    setUserProfile(profile);
+                });
+            }
+        }).catch(console.error);
+    }, []);
 
     const handleLoginClick = () => {
-        navigate('/login');
+        keycloak.login();
+    };
+
+
+    const handleLogoutClick = () => {
+        keycloak.logout();
     };
 
     const categories = [
@@ -24,7 +49,21 @@ const Home: React.FC = () => {
                     <div className="logo">COLLECTOR<span className="dot">.</span></div>
                     <div className="nav-links">
                         <button className="btn-secondary">Vendre un objet</button>
-                        <button className="btn-primary" onClick={handleLoginClick}>Se connecter</button>
+
+                        {!isAuthenticated ? (
+                            <button className="btn-primary" onClick={handleLoginClick}>
+                                Se connecter
+                            </button>
+                        ) : (
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                <span style={{ fontWeight: 'bold' }}>
+                                    Bonjour, {userProfile?.firstName || "Membre"}
+                                </span>
+                                <button className="btn-primary" onClick={handleLogoutClick}>
+                                    Déconnexion
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </nav>
@@ -39,6 +78,11 @@ const Home: React.FC = () => {
                     </p>
                     <div className="hero-buttons">
                         <button className="btn-cta">Explorer le catalogue</button>
+                        {isAuthenticated && (
+                            <button className="btn-secondary" style={{marginLeft: '10px'}}>
+                                Mon Tableau de bord
+                            </button>
+                        )}
                     </div>
                 </div>
             </header>
