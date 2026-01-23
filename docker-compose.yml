@@ -104,7 +104,6 @@ services:
       KC_LOG_LEVEL: INFO
     volumes:
       - ./keycloak-shop:/opt/keycloak/data/import:ro
-      - ./keycloak-shop/providers:/opt/keycloak/providers:ro
     command:
       - start-dev
       - --import-realm
