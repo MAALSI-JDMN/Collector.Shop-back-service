@@ -36,6 +36,7 @@ const runWorker = async () => {
                     const parsed = JSON.parse(payload);
                     sentAt = parsed.sentAt;
                 } catch (e) {
+                    // contenu non JSON, sentAt reste null
                 }
 
                 // Prépare les données pour l'API

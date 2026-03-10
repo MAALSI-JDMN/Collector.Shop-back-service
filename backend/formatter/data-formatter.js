@@ -20,7 +20,7 @@ const createStandardMessage = ({ source, workerId, messageId, key, content, meta
             sentAt = parsed.sentAt || parsed.date;
         }
     } catch (e) {
-
+        // contenu non JSON, on garde le payload brut
     }
 
     return {
