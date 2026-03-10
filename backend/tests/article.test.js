@@ -14,6 +14,18 @@ jest.mock("kafkajs", () => {
     };
 });
 
+jest.mock("amqplib", () => ({
+    connect: jest.fn().mockResolvedValue({
+        createChannel: jest.fn().mockResolvedValue({
+            assertQueue: jest.fn().mockResolvedValue(),
+            sendToQueue: jest.fn().mockReturnValue(true),
+            consume: jest.fn(),
+            ack: jest.fn(),
+        }),
+        on: jest.fn(),
+    }),
+}));
+
 const request = require("supertest");
 const app = require("../app");
 const db = require("../database");
