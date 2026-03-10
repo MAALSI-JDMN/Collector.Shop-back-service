@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
 
 router.post("/valider", (req, res) => {
     const { nom, email, age } = req.body;
-    res.send(`Nom: ${nom} | Email: ${email} | Age: ${age}`);
+    res.render("demo-result", { nom, email, age });
 });
 
 module.exports = router;
