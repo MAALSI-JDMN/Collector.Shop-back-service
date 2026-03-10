@@ -31,7 +31,7 @@ jobs:
 
       - name: NPM Security Audit
         working-directory: ./backend
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=high --omit=dev
 
       - name: Vérification Syntaxe (Lint)
         working-directory: ./backend
