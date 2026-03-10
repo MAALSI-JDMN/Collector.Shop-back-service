@@ -27,8 +27,8 @@ jest.mock("amqplib", () => ({
 }));
 
 const request = require("supertest");
-const app = require("../app");
-const db = require("../database");
+const app = require("../../app");
+const db = require("../../database");
 
 let articleId;
 

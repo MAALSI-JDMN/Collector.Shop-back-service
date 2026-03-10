@@ -8,21 +8,28 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ory/client": "^1.22.15",
     "amqplib": "^0.10.5",
-    "cookie-parser": "~1.4.4",
-    "cors": "^2.8.5",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "debug": "^4.4.0",
+    "express": "^5.1.0",
+    "http-errors": "^2.0.0",
+    "pug": "^3.0.3",
     "jest": "^30.2.0",
     "kafkajs": "^2.2.4",
-    "morgan": "~1.9.1",
+    "morgan": "^1.10.0",
     "socket.io": "^4.8.1",
     "sqlite3": "^5.1.7",
     "supertest": "^7.1.4"
   },
   "devDependencies": {
     "eslint": "^8.56.0"
+  },
+  "overrides": {
+    "axios": "^1.8.0",
+    "tar": "^7.5.10"
   }
 }

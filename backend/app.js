@@ -13,19 +13,20 @@ var kafkaRouter = require('./routes/kafka');
 var rabbitmqRouter = require('./routes/rabbitmq');
 var demoRouter = require('./routes/demo')
 var articlesRouter = require('./routes/articles');
+var hydraRouter = require('./routes/hydra');
 
 var app = express();
 
 // CORS - Autorise les requêtes cross-origin
 app.use(cors({
-    origin: ['http://localhost:8080', 'http://localhost:5173'],
+    origin: ['http://localhost:8080', 'http://localhost:5173', 'http://localhost:3001'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -38,6 +39,7 @@ app.use('/articles',articlesRouter);
 app.use('/kafka', kafkaRouter);
 app.use('/rabbitmq', rabbitmqRouter);
 app.use('/demo', demoRouter)
+app.use('/hydra', hydraRouter);
 
 // catch 404
 app.use(function(req, res, next) {

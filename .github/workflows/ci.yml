@@ -29,6 +29,10 @@ jobs:
         working-directory: ./backend
         run: npm install
 
+      - name: NPM Security Audit
+        working-directory: ./backend
+        run: npm audit --audit-level=high --omit=dev
+
       - name: Vérification Syntaxe (Lint)
         working-directory: ./backend
         run: npm run lint
@@ -78,3 +82,4 @@ jobs:
             -Dsonar.sources=backend/routes
             -Dsonar.tests=backend/tests
             -Dsonar.exclusions=**/node_modules/**,frontend/**
+            -Dsonar.qualitygate.wait=true
