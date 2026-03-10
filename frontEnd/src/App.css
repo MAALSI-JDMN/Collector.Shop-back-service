@@ -98,6 +98,14 @@ button {
 }
 .btn-cta:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
 
+.btn-battle {
+  background: linear-gradient(135deg, #ff4444, #ff6b35);
+  color: white;
+  border: none;
+  font-weight: 700;
+}
+.btn-battle:hover { transform: translateY(-1px); box-shadow: 0 0 15px rgba(255, 68, 68, 0.5); }
+
 /* --- HERO SECTION --- */
 .hero {
   /* Dégradé subtil */

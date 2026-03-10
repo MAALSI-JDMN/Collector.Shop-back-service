@@ -56,13 +56,13 @@ Une fois la commande terminée, les services suivants sont accessibles :
 
 Le projet implémente deux systèmes de messaging de manière identique pour permettre un **benchmark comparatif**.
 
-| Composant | Kafka | RabbitMQ |
-|-----------|-------|----------|
-| **Client** | `kafka/client.js` | `rabbitmq/client.js` |
-| **Producer** | `routes/kafka.js` | `routes/rabbitmq.js` |
-| **Consumer** | `kafka/consumer.js` | `rabbitmq/consumer.js` |
-| **Worker** | `shop_worker` | `shop_worker_rabbit` |
-| **Destination** | Topic `quickstart-events` | Queue `quickstart-events` |
+| Composant | Kafka                | RabbitMQ |
+|-----------|----------------------|----------|
+| **Client** | `kafka/client.js`    | `rabbitmq/client.js` |
+| **Producer** | `routes/kafka.js`    | `routes/rabbitmq.js` |
+| **Consumer** | `kafka/consumer.js`  | `rabbitmq/consumer.js` |
+| **Worker** | `shop_worker`        | `shop_worker_rabbit` |
+| **Destination** | Topic `COMMAND_EVENT` | Queue `quickstart-events` |
 
 ### Fichiers clés
 

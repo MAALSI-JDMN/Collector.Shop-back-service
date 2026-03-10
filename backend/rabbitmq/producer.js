@@ -1,6 +1,6 @@
 const { getChannel, QUEUE_NAME } = require('./client');
 
-// Publie un message dans la queue RabbitMQ
+
 const publish = async (message) => {
     const channel = getChannel();
 
@@ -12,7 +12,7 @@ const publish = async (message) => {
 
     // Envoie le message dans la queue
     channel.sendToQueue(QUEUE_NAME, Buffer.from(payload), {
-        persistent: true // Le message survit aux redémarrages du broker
+        persistent: true // ATTENTION : Le message survit aux redémarrages du broker
     });
 
     console.log(`[RabbitMQ] Message publié → ${QUEUE_NAME}:`, payload);

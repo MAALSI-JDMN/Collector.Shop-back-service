@@ -21,10 +21,20 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-var io = require('socket.io')(server);
-var runWorker = require('../kafka/consumer');
+// Socket.io avec CORS pour le frontend React
+var io = require('socket.io')(server, {
+    cors: {
+        origin: ["http://localhost:8080", "http://localhost:5173"],
+        methods: ["GET", "POST"]
+    }
+});
 
-runWorker(io);
+// Rendre io accessible globalement pour les routes
+app.set('io', io);
+
+// Note: Les consumers Kafka et RabbitMQ tournent dans des workers Docker séparés
+// (shop_consumer_kafka et shop_consumer_rabbit) et notifient l'API via HTTP POST
+// /kafka/notify et /rabbitmq/notify respectivement
 
 
 /**

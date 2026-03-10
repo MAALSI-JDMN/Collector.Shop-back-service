@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors');
 
 // import DB
 const db = require('./database');
@@ -14,6 +15,13 @@ var demoRouter = require('./routes/demo')
 var articlesRouter = require('./routes/articles');
 
 var app = express();
+
+// CORS - Autorise les requêtes cross-origin
+app.use(cors({
+    origin: ['http://localhost:8080', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -70,32 +70,38 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  worker:
+  consumer_kafka:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: shop_worker
+    container_name: shop_consumer_kafka
     networks: [ app-network ]
     command: ["node", "kafka/consumer.js"]
     environment:
       - KAFKA_BROKER=kafka:9092
       - KAFKAJS_NO_PARTITIONER_WARNING=1
+      - API_NOTIFY_URL=http://api:3000/kafka/notify
     depends_on:
       kafka:
         condition: service_healthy
+      api:
+        condition: service_started
 
-  worker_rabbit:
+  consumer_rabbit:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: shop_worker_rabbit
+    container_name: shop_consumer_rabbit
     networks: [ app-network ]
     command: ["node", "rabbitmq/consumer.js"]
     environment:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - API_NOTIFY_URL=http://api:3000/rabbitmq/notify
     depends_on:
       rabbitmq:
         condition: service_healthy
+      api:
+        condition: service_started
 
   frontend:
     build:

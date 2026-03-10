@@ -9,6 +9,10 @@ const Home: React.FC = () => {
         navigate('/login');
     };
 
+    const handleBattleClick = () => {
+        navigate('/battle');
+    };
+
     const categories = [
         { id: 1, title: "Sneakers Édition Limitée", icon: "👟" },
         { id: 2, title: "Figurines & Jouets", icon: "🤖" },
@@ -23,6 +27,7 @@ const Home: React.FC = () => {
                 <div className="container navbar-content">
                     <div className="logo">COLLECTOR<span className="dot">.</span></div>
                     <div className="nav-links">
+                        <button className="btn-battle" onClick={handleBattleClick}>Battle Arena</button>
                         <button className="btn-secondary">Vendre un objet</button>
                         <button className="btn-primary" onClick={handleLoginClick}>Se connecter</button>
                     </div>
