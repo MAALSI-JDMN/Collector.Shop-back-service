@@ -154,9 +154,9 @@ services:
     image: postgres:15
     networks: [ app-network ]
     environment:
-      - POSTGRES_USER=hydra
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=hydra
+      - POSTGRES_USER=${HYDRA_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${HYDRA_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${HYDRA_POSTGRES_DB}
     ports:
       - "5433:5432"
     volumes:
@@ -171,7 +171,7 @@ services:
     image: oryd/hydra:v2.2.0
     networks: [ app-network ]
     environment:
-      - DSN=postgres://hydra:secret@hydra-postgres:5432/hydra?sslmode=disable
+      - DSN=${HYDRA_DSN}
     command: migrate sql -e --yes
     depends_on:
       - hydra-postgres
@@ -191,12 +191,12 @@ services:
       - "5555:5555"
     command: serve all --dev
     environment:
-      - DSN=postgres://hydra:secret@hydra-postgres:5432/hydra?sslmode=disable
+      - DSN=${HYDRA_DSN}
       - URLS_SELF_ISSUER=http://localhost:4444
       - URLS_LOGIN=http://localhost:3001/login-hydra
       - URLS_CONSENT=http://localhost:3000/hydra/consent
       - URLS_LOGOUT=http://localhost:3000/hydra/logout
-      - SECRETS_SYSTEM=votre_secret_tres_long_et_securise_pour_hydra
+      - SECRETS_SYSTEM=${HYDRA_SECRETS_SYSTEM}
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
