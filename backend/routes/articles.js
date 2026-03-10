@@ -37,7 +37,7 @@ router.post('/', (req, res) => {
 });
 
 // DELETE /articles/:id
-router.delete('/:id', (req, res) => {3
+router.delete('/:id', (req, res) => {
     const { id } = req.params;
 
     // Requête de suppression

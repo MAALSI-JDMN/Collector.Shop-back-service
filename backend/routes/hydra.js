@@ -168,7 +168,7 @@ router.post('/callback', async (req, res) => {
         let userPayload = {};
         if (idToken) {
             const base64Url = idToken.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const base64 = base64Url.replaceAll('-', '+').replaceAll('_', '/');
             userPayload = JSON.parse(atob(base64));
         }
 

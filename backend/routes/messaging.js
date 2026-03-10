@@ -60,7 +60,7 @@ const createMessagingRouter = ({ name, publishFn, socketEvent, extractContent })
         const io = req.app.get('io');
         const data = req.body;
 
-        console.log(`[${name}] Notification reçue du Worker:`, data);
+        console.log(`[${name}] Notification reçue du Worker`);
 
         if (io) {
             const contenu = extractContent
