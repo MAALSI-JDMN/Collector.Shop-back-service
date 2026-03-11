@@ -83,3 +83,56 @@ jobs:
             -Dsonar.tests=backend/tests
             -Dsonar.exclusions=**/node_modules/**,frontend/**
             -Dsonar.qualitygate.wait=true
+          
+  zap-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Lancement du serveur et Scan ZAP
+        run: |
+          mkdir -p zap_reports
+          touch app.log
+          
+          chmod 777 zap_reports
+
+          cd backend
+          npm ci
+          nohup npm start > ../app.log 2>&1 &
+          cd ..
+
+          echo "Attente du démarrage du serveur..."
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null http://localhost:3000; then
+              echo "Serveur prêt après ${i}s"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "Le serveur n'a pas démarré dans les temps"
+              cat app.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+          docker run --rm --network host \
+            -v $(pwd)/zap_reports:/zap/wrk/:rw \
+            zaproxy/zap-stable zap-baseline.py \
+            -t http://localhost:3000 -I -r zap_report.html || true
+
+      - name: Sauvegarde des artefacts (Rapport & Logs)
+        uses: actions/upload-artifact@v4
+        if: always() # Garantit que l'artefact est créé même si le test échoue
+        with:
+          name: zap-reports
+          path: |
+            zap_reports/zap_report.html
+            app.log
+          retention-days: 7
