@@ -93,6 +93,7 @@ services:
     container_name: shop_consumer_rabbit
     networks: [ app-network ]
     command: ["node", "rabbitmq/consumer.js"]
+    restart: on-failure
     environment:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - API_NOTIFY_URL=http://api:3000/rabbitmq/notify

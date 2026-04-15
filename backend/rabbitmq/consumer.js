@@ -60,6 +60,7 @@ const runWorker = async () => {
 
     } catch (error) {
         console.error('[RabbitMQ Worker] Erreur Consumer:', error);
+        process.exit(1);
     }
 };
 
