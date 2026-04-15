@@ -15,7 +15,7 @@ const publish = async (message) => {
         persistent: true // ATTENTION : Le message survit aux redémarrages du broker
     });
 
-    console.log(`[RabbitMQ] Message publié → ${QUEUE_NAME}:`, payload);
+    console.log(`[RabbitMQ] Message publié → ${QUEUE_NAME} (${payload.length} octets)`);
 
     return true;
 };

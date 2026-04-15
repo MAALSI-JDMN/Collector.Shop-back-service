@@ -75,15 +75,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: backend
           args: >
             -Dsonar.projectKey=MAALSI-JDMN_Collector.Shop-back-service
             -Dsonar.organization=maalsi-jdmn
-            -Dsonar.javascript.lcov.reportPaths=../${{ env.BACK_COVERAGE }}
-            -Dsonar.sources=.
-            -Dsonar.tests=tests
-            -Dsonar.exclusions=**/node_modules/**,bin/**,public/**,views/**,coverage/**
-            -Dsonar.test.inclusions=tests/**
+            -Dsonar.javascript.lcov.reportPaths=${{ env.BACK_COVERAGE }}
+            -Dsonar.sources=backend/routes
+            -Dsonar.tests=backend/tests
+            -Dsonar.exclusions=**/node_modules/**,frontend/**
             -Dsonar.qualitygate.wait=true
           
   zap-scan:

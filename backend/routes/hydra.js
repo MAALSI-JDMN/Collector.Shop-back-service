@@ -25,7 +25,7 @@ router.post('/login-request', async (req, res) => {
         }
         return res.json({ showForm: true });
     } catch (e) {
-        console.error("Erreur Hydra /login-request:", e.response ? e.response.data : e.message);
+        console.error("Erreur Hydra /login-request", { type: e.name, status: e.response?.status });
         res.status(500).json({ error: "Erreur lors de la communication avec Hydra" });
     }
 });
@@ -59,7 +59,7 @@ router.post('/login-submit', async (req, res) => {
             });
             return res.json({ redirectTo: accept.redirect_to });
         } catch (e) {
-            console.error("Erreur Hydra /login-submit:", e.response ? e.response.data : e.message);
+            console.error("Erreur Hydra /login-submit", { type: e.name, status: e.response?.status });
             res.status(500).json({ error: "Impossible de valider le login aupres de Hydra" });
         }
     });
@@ -104,7 +104,7 @@ router.get('/logout', async (req, res, next) => {
         });
         res.redirect(accept.redirect_to);
     } catch (e) {
-        console.error("Erreur Hydra /logout:", e.response ? e.response.data : e.message);
+        console.error("Erreur Hydra /logout", { type: e.name, status: e.response?.status });
         next(e);
     }
 });
@@ -160,7 +160,7 @@ router.post('/callback', async (req, res) => {
         const data = await response.json();
 
         if (!response.ok) {
-            console.error('Erreur Hydra Token:', data);
+            console.error('Erreur Hydra Token', { status: response.status });
             return res.status(401).json({ error: "Echec de l'echange de token", details: data });
         }
 
@@ -180,7 +180,7 @@ router.post('/callback', async (req, res) => {
             user: userPayload
         });
     } catch (error) {
-        console.error('Erreur Backend Callback:', error);
+        console.error('Erreur Backend Callback', { type: error.name });
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
